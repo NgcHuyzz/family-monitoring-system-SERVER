@@ -1,6 +1,7 @@
 package com.family.server;
 
 import com.family.server.controller.ScreenshotControllerAgent;
+import com.family.server.controller.keystoreController;
 import com.family.server.service.ScreenshotClear;
 import com.family.server.service.ServerBusiness;
 
@@ -19,5 +20,7 @@ public class App
         sca.start();
         ScreenshotClear clear = new ScreenshotClear(100, 60000);
         clear.start();
+        keystoreController ksc = new keystoreController();
+        ksc.start();
     }
 }
