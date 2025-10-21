@@ -114,7 +114,7 @@ public class ScreenshotDAO {
 	// lay limit phan tu
 	public List<Screenshot> getLatest(int limit)
 	{
-		List<Screenshot> list = new ArrayList<>();
+		List<Screenshot> li = new ArrayList<>();
 		String sql = "SELECT * FROM screenshots ORDER BY ts DESC LIMIT ?";
 		try
 		{
@@ -133,7 +133,7 @@ public class ScreenshotDAO {
 				model.setBytes(rs.getInt("bytes"));
 				model.setCreateAt(rs.getTimestamp("createAt"));
 				
-				list.add(model);
+				li.add(model);
 			}
 		}
 		catch(Exception e)
@@ -141,7 +141,7 @@ public class ScreenshotDAO {
 			
 		}
 		
-		return list;
+		return li;
 	}
 	
 	// clear moi thiet bi chi ton tai max anh
@@ -167,21 +167,45 @@ public class ScreenshotDAO {
 	// clear 1 thiet bi chi ton tai max anh
 	private void clearScreenshot(String deviceID,int max)
 	{
-		String sql = "DELETE FROM Screenshots "
-				+ "where deviceID = ?"
-				+ "ORDER BY ts ASC"
-				+ "LIMIT GREATEST((SELECT COUNT(*) FROM Screenshots where deviceID = ?) - ?,0)";	
+		String sql = "SELECT COUNT(*) FROM Screenshots where deviceID = ?";
+		int totalDelete = 0;
 		try
 		{
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, deviceID);
-			ps.setString(2, deviceID);
-			ps.setInt(3, max);
-			ps.executeUpdate();
+			ResultSet rs = ps.executeQuery();
+			if(rs.next())
+			{
+				int total = rs.getInt(1);
+				totalDelete = (total - max) > 0 ? (total-max) : 0;
+			}
 		}
 		catch(Exception e)
 		{
 			
+		}
+		
+		if(totalDelete == 0)
+			return;
+		
+		String sql2 = "DELETE FROM Screenshots "
+				+ "where id IN ( "
+				+ "SELECT id FROM ( "
+				+ "SELECT id FROM Screenshots where deviceID = ? "
+				+ "ORDER BY ts ASC "
+				+ "LIMIT ? "
+				+ ") as tmp"
+				+ ")";
+		try
+		{
+			PreparedStatement ps = con.prepareStatement(sql2);
+			ps.setString(1, deviceID);
+			ps.setInt(2, totalDelete);
+			ps.executeUpdate();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 	
