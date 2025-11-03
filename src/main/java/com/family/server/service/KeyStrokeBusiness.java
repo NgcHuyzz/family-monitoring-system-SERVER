@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import com.family.server.controller.KeyStrokeController;
 import com.family.server.model.KeyStroke;
 import com.family.server.repository.KeyStrokeDAO;
 
@@ -40,9 +41,8 @@ public class KeyStrokeBusiness extends Thread {
 				model.setIv(iv);
 				model.setCreateAt(new Timestamp(takeAt));
 				
-				KeyStrokeDAO ksDAO = new KeyStrokeDAO();
-				ksDAO.addKeyStroke(model);
-				ksDAO.close();			
+				KeyStrokeController kc = new KeyStrokeController();
+				kc.addKeyStroke(model);
 			}
 			
 		}

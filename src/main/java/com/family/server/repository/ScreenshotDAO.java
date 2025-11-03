@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import com.family.server.config.JDBC;
 import com.family.server.model.Screenshot;
@@ -111,6 +110,37 @@ public class ScreenshotDAO {
 		return null;
 	}
 	
+	public List<Screenshot> getByDeviceID(String DeviceID)
+	{
+		List<Screenshot> li = new ArrayList<>();
+		String sql = "SELECT * FROM Screenshots where deviceID = ? ORDER BY ts DESC";
+		try
+		{
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, DeviceID);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next())
+			{
+				Screenshot model = new Screenshot();
+				model.setId(UUID.fromString(rs.getString("id")));
+				model.setDeviceId(UUID.fromString(rs.getString("deviceID")));
+				model.setTs(rs.getTimestamp("ts"));
+				model.setImgData(rs.getBytes("imgData"));
+				model.setWidth(rs.getInt("width"));
+				model.setHeight(rs.getInt("height"));
+				model.setBytes(rs.getInt("bytes"));
+				model.setCreateAt(rs.getTimestamp("createAt"));
+
+				li.add(model);
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+		return li;
+	}
+	
 	// lay limit phan tu
 	public List<Screenshot> getLatest(int limit)
 	{
@@ -120,6 +150,37 @@ public class ScreenshotDAO {
 		{
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setInt(1, limit);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next())
+			{
+				Screenshot model = new Screenshot();
+				model.setId(UUID.fromString(rs.getString("id")));
+				model.setDeviceId(UUID.fromString(rs.getString("deviceID")));
+				model.setTs(rs.getTimestamp("ts"));
+				model.setImgData(rs.getBytes("imgData"));
+				model.setWidth(rs.getInt("width"));
+				model.setHeight(rs.getInt("height"));
+				model.setBytes(rs.getInt("bytes"));
+				model.setCreateAt(rs.getTimestamp("createAt"));
+				
+				li.add(model);
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		return li;
+	}
+	
+	public List<Screenshot> getALL()
+	{
+		List<Screenshot> li = new ArrayList<>();
+		String sql = "SELECT * FROM screenshots";
+		try
+		{
+			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next())
 			{

@@ -104,13 +104,14 @@ public class KeyStrokeDAO {
 	}
 	
 	// lay tat ca phan tu
-	public List<KeyStroke> GetAll()
+	public List<KeyStroke> GetAllOfDevides(String DeviceID)
 	{
 		List<KeyStroke> li = new ArrayList<KeyStroke>();
-		String sql = "SELECT * FROM Keystrokes";
+		String sql = "SELECT * FROM Keystrokes where deviceID = ?";
 		try
 		{
 			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, DeviceID);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next())
 			{
