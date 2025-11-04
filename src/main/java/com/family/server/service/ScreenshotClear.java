@@ -21,7 +21,6 @@ public class ScreenshotClear extends Thread {
 		{		
 			try
 			{
-				System.out.println("hehe");
 				long t0 = System.nanoTime();
 				ScreenshotDAO sDAO = new ScreenshotDAO();
 				sDAO.clearScreenshotAllDevice(maxImgDevice);

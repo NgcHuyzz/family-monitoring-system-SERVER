@@ -9,7 +9,7 @@ public class User {
     private Timestamp createAt;
 
     public User() {}
-    public  User(UUID id, String email, String password, Timestamp createAt)
+    public User(UUID id, String email, String password, Timestamp createAt)
     {
         this.id = id;
         this.email = email;

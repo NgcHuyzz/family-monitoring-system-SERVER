@@ -1,5 +1,6 @@
 package com.family.server.service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -26,19 +27,15 @@ public class DecipherAES {
 			GCMParameterSpec gcm = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
 			cipher.init(Cipher.DECRYPT_MODE, keySpec, gcm);
 			
-			byte[] decrypted = cipher.doFinal(textEnc);
+			byte[] plainText = cipher.doFinal(textEnc);
 			
-			return new String(decrypted, java.nio.charset.StandardCharsets.UTF_8);
+			return new String(plainText, StandardCharsets.UTF_8);
 		}
 		catch(Exception e)
 		{
 			
 		}
 		return "";
-	
-		
-		
-		
 	}
 	
 }
