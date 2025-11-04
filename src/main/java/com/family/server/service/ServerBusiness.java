@@ -16,6 +16,8 @@ public class ServerBusiness extends Thread {
 			ServerSocket server1 = new ServerSocket(5000);
 
 			ServerSocket server2 = new ServerSocket(2345);
+
+			ServerSocket server3 = new ServerSocket(1234);
 			while(true)
 			{
 				try
@@ -26,6 +28,9 @@ public class ServerBusiness extends Thread {
 					Socket soc2 = server2.accept();
 					KeyStrokeBusiness ksb = new KeyStrokeBusiness(soc2);
 					ksb.start();
+					Socket soc3 = server3.accept();
+					AppUsageBusiness asb = new AppUsageBusiness(soc3);
+					asb.start();
 				}
 				catch(Exception e)
 				{

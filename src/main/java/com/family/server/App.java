@@ -1,5 +1,7 @@
 package com.family.server;
 import com.family.server.demoDashboard.MainFrame;
+
+import com.family.server.controller.AppUsageController;
 import com.family.server.service.ScreenshotClear;
 import com.family.server.service.ServerBusiness;
 
@@ -16,6 +18,8 @@ public class App
         sb.start();
         ScreenshotClear clear = new ScreenshotClear(100, 60000);
         clear.start();
+        AppUsageController asc = new AppUsageController();
+        asc.start();
         new MainFrame();
     }
 }
