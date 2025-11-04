@@ -1,5 +1,6 @@
 package com.family.server;
 
+import com.family.server.controller.AppUsageController;
 import com.family.server.controller.ScreenshotControllerAgent;
 import com.family.server.controller.keystoreController;
 import com.family.server.service.ScreenshotClear;
@@ -22,5 +23,7 @@ public class App
         clear.start();
         keystoreController ksc = new keystoreController();
         ksc.start();
+        AppUsageController asc = new AppUsageController();
+        asc.start();
     }
 }
