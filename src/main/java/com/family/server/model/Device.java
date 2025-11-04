@@ -1,12 +1,12 @@
 package com.family.server.model;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Device {
     private UUID id;
     private String name;
+    private String os; 
     private String lastIP;
     private UUID userId;
     private Timestamp registeredAt;
@@ -15,9 +15,10 @@ public class Device {
     public Device() {
     }
 
-    public Device(UUID id, String name, String lastIP, UUID userId, Timestamp registeredAt, Timestamp lastSeenAt) {
+    public Device(UUID id, String name,String os, String lastIP, UUID userId, Timestamp registeredAt, Timestamp lastSeenAt) {
         this.id = id;
         this.name = name;
+        this.os = os;
         this.lastIP = lastIP;
         this.userId = userId;
         this.registeredAt = registeredAt;
@@ -26,6 +27,7 @@ public class Device {
 
     public UUID getId() {return id;}
     public String getName() {return name;}
+    public String getOs() {return os;}
     public String getLastIP() {return lastIP;}
     public UUID getUserId() {return userId;}
     public Timestamp getRegisteredAt() {return registeredAt;}
@@ -33,6 +35,7 @@ public class Device {
 
     public void setId(UUID id) {this.id = id;}
     public void setName(String name) {this.name = name;}
+    public void setOs(String os) {this.os = os;}
     public void setLastIP(String lastIP) {this.lastIP = lastIP;}
     public void setUserId(UUID userId) {this.userId = userId;}
     public void setRegisteredAt(Timestamp registeredAt) {this.registeredAt = registeredAt;}

@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import com.family.server.controller.ScreenshotController;
 import com.family.server.model.Screenshot;
 import com.family.server.repository.ScreenshotDAO;
 
@@ -44,10 +45,9 @@ public class ScreenshotBusiness extends Thread {
 				s.setTs(new Timestamp(takeAt));
 				s.setCreateAt(new java.sql.Timestamp(System.currentTimeMillis()));
 				
-				// ghi vo database
-				ScreenshotDAO sDAO = new ScreenshotDAO();
-				sDAO.addScreenshot(s);
-				sDAO.close();
+				ScreenshotController sc = new ScreenshotController();
+				sc.addScreenshot(s);
+				
 			}
 		}
 		catch(Exception e)
