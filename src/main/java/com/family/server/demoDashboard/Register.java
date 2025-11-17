@@ -106,7 +106,7 @@ public class Register extends JPanel {
 			String confirmPassword = new String(txtCMK.getPassword());
 			
 			LoginController lc = new LoginController();
-			int check = lc.checkLogin(username, password);
+			int check = lc.checkRegister(username, password, confirmPassword);
 			
 			switch(check)
 			{
@@ -124,9 +124,6 @@ public class Register extends JPanel {
 					break;
 				case 5:
 					lbWarn.setText("Username đã tồn tại");
-					break;
-				case 6:
-					lbWarn.setText("Username hoặc mật khẩu không đúng");
 					break;
 				default:
 					lbWarn.setText("");

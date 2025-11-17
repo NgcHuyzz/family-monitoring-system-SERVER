@@ -63,14 +63,9 @@ public class LoginController {
 			return 4;
 		}
 		
-		if(!checkUsername(username))
+		if(checkUsername(username))
 		{
 			return 5;
-		}
-		
-		if(!checkUserPassInDatabase(username, password))
-		{
-			return 6;
 		}
 		
 		return 0;
