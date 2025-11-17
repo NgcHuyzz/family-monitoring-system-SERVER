@@ -18,6 +18,7 @@ public class ServerBusiness extends Thread {
 			ServerSocket server2 = new ServerSocket(2345);
 
 			ServerSocket server3 = new ServerSocket(1234);
+			new CommandSocketListener(8888).start();
 			while(true)
 			{
 				try
@@ -31,6 +32,7 @@ public class ServerBusiness extends Thread {
 					Socket soc3 = server3.accept();
 					AppUsageBusiness asb = new AppUsageBusiness(soc3);
 					asb.start();
+
 				}
 				catch(Exception e)
 				{
