@@ -47,7 +47,8 @@ public class PolicyPanel extends JPanel {
 	{
 		setLayout(new BorderLayout());
         setBackground(Color.WHITE);
-		
+
+        loadPolicy();
 		JPanel menu = new JPanel();
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         menu.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
@@ -94,7 +95,6 @@ public class PolicyPanel extends JPanel {
         btnBlackListKeyword.addActionListener(e -> contentPolicy.show(contentPolicyPanel, "keyword"));
         btnWhiteListApp.addActionListener(e -> contentPolicy.show(contentPolicyPanel, "app"));
         
-        loadPolicy();
         
         btnAdd.addActionListener(e -> {
         	int dailyTimeQuote = Integer.parseInt(txtQuote.getText());
@@ -122,7 +122,7 @@ public class PolicyPanel extends JPanel {
         		domainBlackList.add(line);
         	}
         	
-        	String[] linesKeyword = txtDomain.getText().split("\\r?\\n");
+        	String[] linesKeyword = txtKeyword.getText().split("\\r?\\n");
         	for(String line : linesKeyword)
         	{
         		if (line.isEmpty()) 
@@ -130,7 +130,7 @@ public class PolicyPanel extends JPanel {
         		keywordBlackList.add(line);
         	}
         	
-        	String[] linesApp = txtDomain.getText().split("\\r?\\n");
+        	String[] linesApp = txtApp.getText().split("\\r?\\n");
         	for(String line : linesApp)
         	{
         		if (line.isEmpty()) 
@@ -179,10 +179,10 @@ public class PolicyPanel extends JPanel {
 	
 	private JPanel QuietHour()
 	{
-		JPanel panel = new JPanel(new FlowLayout());
+		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(new JLabel("<html>QuietHour (cú pháp: <b>\"Day - from hour to hour\"</b>)"
                 + "<br/>Ví dụ: <code>Monday - from 22:00 to 24:00</code>"
-                + "<br/>Mỗi dòng một khung giờ.</html>"));
+                + "<br/>Mỗi dòng một khung giờ.</html>"), BorderLayout.NORTH);
 		txtHour = new JTextArea(10, 50); 
         txtHour.setLineWrap(true);
         txtHour.setWrapStyleWord(true);
@@ -203,15 +203,15 @@ public class PolicyPanel extends JPanel {
             }
         }
         
-        panel.add(sp);
+        panel.add(sp, BorderLayout.CENTER);
 		
 		return panel;
 	}
 	
 	private JPanel BlackListDomain()
 	{
-		JPanel panel = new JPanel(new FlowLayout());
-		panel.add(new JLabel("BlackListDomain(Mỗi 1 dòng là một từ)"));
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(new JLabel("BlackListDomain(Mỗi 1 dòng là một từ)"), BorderLayout.NORTH);
 		txtDomain = new JTextArea(10, 50); 
 		txtDomain.setLineWrap(true);
 		txtDomain.setWrapStyleWord(true);
@@ -228,15 +228,15 @@ public class PolicyPanel extends JPanel {
         	}
         }
         
-        panel.add(sp);
+        panel.add(sp, BorderLayout.CENTER);
 		
 		return panel;
 	}
 	
 	private JPanel BlackListKeyword()
 	{
-		JPanel panel = new JPanel(new FlowLayout());
-		panel.add(new JLabel("BlackListKeyword(Mỗi 1 dòng là một từ)"));
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(new JLabel("BlackListKeyword(Mỗi 1 dòng là một từ)"), BorderLayout.NORTH);
 		txtKeyword = new JTextArea(10, 50);
 		txtKeyword.setLineWrap(true);
 		txtKeyword.setWrapStyleWord(true);
@@ -252,15 +252,15 @@ public class PolicyPanel extends JPanel {
         		txtKeyword.append(s + "\n");
         	}
         }
-		panel.add(txtKeyword);
+        panel.add(sp, BorderLayout.CENTER);
 		
 		return panel;
 	}
 	
 	private JPanel WhiteListApp()
 	{
-		JPanel panel = new JPanel(new FlowLayout());
-		panel.add(new JLabel("WhiteListApp(Mỗi 1 dòng là một từ)"));
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(new JLabel("WhiteListApp(Mỗi 1 dòng là một từ)"), BorderLayout.NORTH);
 		txtApp = new JTextArea(10, 50);
 		txtApp.setLineWrap(true);
 		txtApp.setWrapStyleWord(true);
@@ -276,7 +276,7 @@ public class PolicyPanel extends JPanel {
         		txtApp.append(s + "\n");
         	}
         }
-		panel.add(txtApp);
+        panel.add(sp, BorderLayout.CENTER);
 		
 		return panel;
 	}
