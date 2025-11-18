@@ -1,45 +1,36 @@
 package com.family.server.service;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class CommandSocketListener extends Thread{
-    private final int port;
+    Socket soc;
 
-    public CommandSocketListener(int port) {
-        this.port = port;
+    public CommandSocketListener(Socket soc) {
+        this.soc = soc;
     }
 
     @Override
     public void run() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("CommandSocketListener listening on port " + port + "...");
+        try {
 
-            while (true) {
-                Socket client = serverSocket.accept();
-                System.out.println("Agent connected from: " + client.getInetAddress());
-
-                PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-                // lưu OutputStream của agent để gửi command
-                AgentChannel.setAgentOut(out);
-
-                // nếu muốn đọc status từ agent (VD: {"status":"ONLINE"})
-                new Thread(() -> {
-                    try {
-                        String line;
-                        while ((line = in.readLine()) != null) {
-                            System.out.println("From agent: " + line);
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Agent disconnected: " + e.getMessage());
-                        AgentChannel.setAgentOut(null);
-                    }
-                }).start();
+        	DataInputStream dis = new DataInputStream(new BufferedInputStream(soc.getInputStream()));
+        	DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(soc.getOutputStream()));
+            while (true) 
+            {
+				String deviceID = dis.readUTF();
+				
+				if(deviceID != null)
+				{
+					AgentChannel.addAgent(deviceID, dos);
+				}
             }
 
         } catch (Exception e) {

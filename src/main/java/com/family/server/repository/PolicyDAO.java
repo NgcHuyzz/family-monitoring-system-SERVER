@@ -134,7 +134,7 @@ public class PolicyDAO {
 		}
 		catch(Exception e)
 		{
-			
+			e.printStackTrace();
 		}
 		return null;
 	}

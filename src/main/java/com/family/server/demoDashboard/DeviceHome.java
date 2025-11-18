@@ -63,6 +63,8 @@ public class DeviceHome extends JPanel {
         styleButton(btnKeyStroke);
         JButton btnPolicy = new JButton("Xem chính sách");
         styleButton(btnPolicy);
+        JButton btnAlert = new JButton("Xem thông báo");
+        styleButton(btnAlert);
         
         menu.add(btnScreenshot);
         menu.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -72,6 +74,8 @@ public class DeviceHome extends JPanel {
         menu.add(Box.createRigidArea(new Dimension(0, 10)));
         menu.add(btnPolicy);
         menu.add(Box.createRigidArea(new Dimension(0, 10)));
+        menu.add(btnAlert);
+        menu.add(Box.createRigidArea(new Dimension(0, 10)));
         
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         contentPanel.setBackground(Color.WHITE);
@@ -80,11 +84,13 @@ public class DeviceHome extends JPanel {
         contentPanel.add(new AppUsedPanel(DeviceID), "appUsed");
         contentPanel.add(new KeyStrokePanel(DeviceID), "keystroke");
         contentPanel.add(new PolicyPanel(DeviceID), "policy");
+        contentPanel.add(new AlertPanel(DeviceID), "alert");
         
         btnScreenshot.addActionListener(e -> contentLayout.show(contentPanel, "screenshot"));
         btnAppUsed.addActionListener(e -> contentLayout.show(contentPanel, "appUsed"));
         btnKeyStroke.addActionListener(e -> contentLayout.show(contentPanel, "keystroke"));
         btnPolicy.addActionListener(e -> contentLayout.show(contentPanel, "policy"));
+        btnAlert.addActionListener(e -> contentLayout.show(contentPanel, "alert"));
         
         add(header, BorderLayout.NORTH);
         add(menu, BorderLayout.WEST);

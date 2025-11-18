@@ -39,8 +39,6 @@ public class AppUsageBusiness extends Thread {
 
                 dao.addAppUsage(model);
 
-                System.out.printf("[Server] Received log: %s | %d sec\n", appName, durationSec);
-
             }
             dao.close();
         }

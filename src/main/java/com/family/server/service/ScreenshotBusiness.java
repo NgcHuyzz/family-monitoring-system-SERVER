@@ -47,7 +47,6 @@ public class ScreenshotBusiness extends Thread {
 				
 				ScreenshotController sc = new ScreenshotController();
 				sc.addScreenshot(s);
-				
 			}
 		}
 		catch(Exception e)
