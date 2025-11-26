@@ -9,8 +9,13 @@ import com.family.server.model.Screenshot;
 import com.family.server.model.KeyStroke;
 import com.family.server.model.Policy;
 import com.family.server.security.JwtUtil;
+import com.family.server.service.AgentChannel;
 import com.family.server.service.DecipherAES;
-import com.family.server.service.ServerCommand;
+//import com.family.server.service.ServerCommand;
+import com.family.server.controller.AppUsageController;
+import com.family.server.controller.AlertController;
+import com.family.server.model.AppUsage;
+import com.family.server.model.Alert;
 import com.google.gson.Gson;
 
 import javax.servlet.http.*;
@@ -55,6 +60,12 @@ public class DeviceServlet extends HttpServlet {
                     break;
                 case "policy":
                     handleGetPolicy(req, resp, deviceId);
+                    break;
+                case "app-usage":
+                    handleGetAppUsage(req, resp, deviceId);
+                    break;
+                case "alerts":
+                    handleGetAlerts(req, resp, deviceId);
                     break;
                 default:
                     resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -275,14 +286,17 @@ public class DeviceServlet extends HttpServlet {
     }
 
     // POST /api/devices/{deviceId}/command
+    // POST /api/devices/{deviceId}/command
     private void handleSendCommand(HttpServletRequest req, HttpServletResponse resp, String deviceId)
             throws IOException {
 
         Map<String, Object> body = parseJsonBody(req);
-        String action = body.get("action") != null ? body.get("action").toString() : null;
+        String action = body.get("action") != null ? body.get("action").toString().trim() : null;
+        String target = body.get("target") != null ? body.get("target").toString().trim() : null;
 
         Map<String, Object> result = new HashMap<>();
 
+        // 1. Validate action
         if (action == null || action.isEmpty()) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             result.put("success", false);
@@ -291,16 +305,32 @@ public class DeviceServlet extends HttpServlet {
             return;
         }
 
-        // Hiện tại ServerCommand chưa phân biệt deviceId
-        // sau này bạn có thể mở rộng để gửi đúng agent theo DeviceID
-        ServerCommand serverCommand = new ServerCommand();
-        serverCommand.sendCommand(action);
+        // 2. Check Agent online?
+        if (!AgentChannel.isConnected(deviceId)) {
+            resp.setStatus(HttpServletResponse.SC_CONFLICT); // 409: Agent offline
+            result.put("success", false);
+            result.put("message", "Agent is offline or not connected");
+            writeJson(resp, result);
+            return;
+        }
 
+        // 3. Gói lệnh dạng JSON chuẩn
+        Map<String, Object> cmd = new HashMap<>();
+        cmd.put("action", action);
+        cmd.put("target", target);  // có thể null
+        String commandJson = gson.toJson(cmd);
+
+        // 4. Gửi xuống Agent
+        AgentChannel.sendCommand(deviceId, commandJson);
+
+        // 5. Response
         result.put("success", true);
         result.put("deviceId", deviceId);
         result.put("action", action);
+        result.put("target", target);
         writeJson(resp, result);
     }
+
 
     // ------------------- HELPER METHODS -------------------
 
@@ -341,4 +371,27 @@ public class DeviceServlet extends HttpServlet {
             return null;
         }
     }
+    // GET /api/devices/{deviceId}/app-usage
+    private void handleGetAppUsage(HttpServletRequest req, HttpServletResponse resp, String deviceId)
+            throws IOException {
+
+        AppUsageController auc = new AppUsageController();
+        List<AppUsage> li = auc.getAllOfDevice(deviceId);
+
+        // Nếu AppUsage model đã ổn để Gson serialize thẳng thì trả trực tiếp:
+        writeJson(resp, li);
+
+        // Nếu sau này muốn FE dùng DTO riêng (group theo ngày, theo app, ...) thì map lại ở đây.
+    }
+    // GET /api/devices/{deviceId}/alerts
+    private void handleGetAlerts(HttpServletRequest req, HttpServletResponse resp, String deviceId)
+            throws IOException {
+
+        AlertController ac = new AlertController();
+        List<Alert> alerts = ac.getAlertOfDevice(deviceId);
+
+        writeJson(resp, alerts);
+    }
+
+
 }
