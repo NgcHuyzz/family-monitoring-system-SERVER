@@ -13,10 +13,10 @@ public class KeyStrokeController {
 		
 	}
 	
-	public Screenshot getScreetshotByKeyStroke(KeyStroke ks)
+	public Screenshot getScreetshotByKeyStroke(KeyStroke ks, String deviceID)
 	{
 		ScreenshotDAO sDao = new ScreenshotDAO(); 
-		List<Screenshot> ls = sDao.getALL(); 
+		List<Screenshot> ls = sDao.getALL(deviceID); 
 		sDao.close();
 		int left = 0, 
 		right = ls.size() -1; 

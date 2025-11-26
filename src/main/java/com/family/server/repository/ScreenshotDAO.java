@@ -174,13 +174,14 @@ public class ScreenshotDAO {
 		return li;
 	}
 	
-	public List<Screenshot> getALL()
+	public List<Screenshot> getALL(String deviceID)
 	{
 		List<Screenshot> li = new ArrayList<>();
-		String sql = "SELECT * FROM screenshots";
+		String sql = "SELECT * FROM screenshots where deviceID = ?";
 		try
 		{
 			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, deviceID);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next())
 			{
