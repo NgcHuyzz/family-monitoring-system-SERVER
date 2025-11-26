@@ -131,13 +131,14 @@ public class AppUsageDAO {
 
         return list;
     }
-    public List<AppUsage> GetAll()
+    public List<AppUsage> GetAllOfDevice(String deviceID)
     {
         List<AppUsage> li = new ArrayList<AppUsage>();
-        String sql = "SELECT * FROM appusage";
+        String sql = "SELECT * FROM appusage where deviceID = ?";
         try
         {
             PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, deviceID);
             ResultSet rs = ps.executeQuery();
             while(rs.next())
             {

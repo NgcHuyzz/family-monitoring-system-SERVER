@@ -3,6 +3,9 @@ package com.family.server.demoDashboard;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -13,7 +16,9 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import com.family.server.controller.KeyStrokeController;
+import com.family.server.controller.PolicyController;
 import com.family.server.model.KeyStroke;
+import com.family.server.model.Policy;
 import com.family.server.service.DecipherAES;
 
 public class KeyStrokePanel extends JPanel {
@@ -70,17 +75,46 @@ public class KeyStrokePanel extends JPanel {
 	{
 		grid.removeAll();
 		JTextArea area = new JTextArea();
+		area.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		area.setWrapStyleWord(true);
 		
 		KeyStrokeController kc = new KeyStrokeController();
 		List<KeyStroke> li =  kc.getAllOfDevice(DeviceID);
 		for(KeyStroke k : li)
 		{
-			String str = DecipherAES.Decipher(k.getTextEnc(), k.getIv());		
+			String str = DecipherAES.Decipher(k.getTextEnc(), k.getIv());	
+			PolicyController pc = new PolicyController();
+			Policy p = pc.getPolicyByDeviceID(DeviceID);
+			List<String> listKeyword = p.getKeywordBlackList();
+			
+			
 			area.append(k.getCreateAt() + " : " + str + "\n");
 		}
 		grid.add(area);
 		
 		grid.revalidate();
 	    grid.repaint();	
+	}
+	
+	private static String norm(String s)
+	{
+		if(s == null)
+			return "";
+		s = Normalizer.normalize(s, Normalizer.Form.NFD);
+		s = s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+		return s.toLowerCase();
+	}
+	
+	private static List<String> findMatchedKeywords(String text, List<String> keywords)
+	{
+		List<String> matched = new java.util.ArrayList<>();
+
+	    String normText = norm(text);
+
+	    for (String kw : keywords) 
+	        if (normText.contains(norm(kw))) 
+	            matched.add(kw);
+
+	    return matched;
 	}
 }
