@@ -63,6 +63,20 @@ public class ScreenshotDAO {
 		}
 	}
 	
+	public void updateScreenshotKeyword(String id)
+	{
+		String sql = "UPDATE Screenshots SET isKeyword = 1 WHERE id = ?";
+		try{
+			PreparedStatement ps = con.prepareStatement(sql);
+		    ps.setString(1, id);
+		    ps.executeUpdate();
+		}
+		catch(Exception e)
+		{
+			
+		}
+	}
+	
 	// xoa du lieu
 	public void DeleteScreenshot(String ID)
 	{
@@ -229,7 +243,7 @@ public class ScreenshotDAO {
 	// clear 1 thiet bi chi ton tai max anh
 	private void clearScreenshot(String deviceID,int max)
 	{
-		String sql = "SELECT COUNT(*) FROM Screenshots where deviceID = ?";
+		String sql = "SELECT COUNT(*) FROM Screenshots where deviceID = ? and isKeyword = 0";
 		int totalDelete = 0;
 		try
 		{
@@ -253,7 +267,7 @@ public class ScreenshotDAO {
 		String sql2 = "DELETE FROM Screenshots "
 				+ "where id IN ( "
 				+ "SELECT id FROM ( "
-				+ "SELECT id FROM Screenshots where deviceID = ? "
+				+ "SELECT id FROM Screenshots where deviceID = ? and isKeyword = 0"
 				+ "ORDER BY ts ASC "
 				+ "LIMIT ? "
 				+ ") as tmp"
