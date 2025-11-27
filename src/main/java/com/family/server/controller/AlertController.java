@@ -27,4 +27,12 @@ public class AlertController {
 		aDAO.close();
 		return li;
 	}
+	public Alert getById(String id)
+	{
+		AlertDAO aDAO = new AlertDAO();
+		Alert a = aDAO.getByID(id);
+		aDAO.close();
+		return a;
+	}
+
 }

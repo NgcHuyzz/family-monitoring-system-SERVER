@@ -22,6 +22,7 @@ import javax.servlet.http.*;
 import javax.servlet.*;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.Base64;
 
@@ -102,6 +103,19 @@ public class DeviceServlet extends HttpServlet {
                     break;
                 default:
                     resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }
+        else if (segs.size() == 4) {
+            // POST /api/devices/{deviceId}/alerts/{alertId}/ack
+            String deviceId = segs.get(0);
+            String action  = segs.get(1);    // "alerts"
+            String alertId = segs.get(2);
+            String sub     = segs.get(3);    // "ack"
+
+            if ("alerts".equals(action) && "ack".equals(sub)) {
+                handleAcknowledgeAlert(req, resp, deviceId, alertId);
+            } else {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -376,13 +390,29 @@ public class DeviceServlet extends HttpServlet {
             throws IOException {
 
         AppUsageController auc = new AppUsageController();
-        List<AppUsage> li = auc.getAllOfDevice(deviceId);
+        List<AppUsage> list = auc.getAllOfDevice(deviceId);
 
-        // Nếu AppUsage model đã ổn để Gson serialize thẳng thì trả trực tiếp:
-        writeJson(resp, li);
+        List<Map<String, Object>> dto = new ArrayList<>();
 
-        // Nếu sau này muốn FE dùng DTO riêng (group theo ngày, theo app, ...) thì map lại ở đây.
+        for (AppUsage au : list) {
+            Map<String, Object> item = new HashMap<>();
+
+            item.put("id", au.getId().toString());
+            item.put("name", au.getAppName());                    // FE đang dùng app.name
+            item.put("lastUsed", au.getStartAt() != null
+                    ? au.getStartAt().toString()
+                    : (au.getCreateAt() != null ? au.getCreateAt().toString() : null));
+
+            int minutes = (int) Math.round(au.getDurationSec() / 60.0);   // convert giây → phút
+            item.put("duration", minutes);               // FE đang dùng app.duration
+
+            dto.add(item);
+        }
+
+        writeJson(resp, dto);
     }
+
+
     // GET /api/devices/{deviceId}/alerts
     private void handleGetAlerts(HttpServletRequest req, HttpServletResponse resp, String deviceId)
             throws IOException {
@@ -391,6 +421,42 @@ public class DeviceServlet extends HttpServlet {
         List<Alert> alerts = ac.getAlertOfDevice(deviceId);
 
         writeJson(resp, alerts);
+    }
+
+    // POST /api/devices/{deviceId}/alerts/{alertId}/ack
+    private void handleAcknowledgeAlert(HttpServletRequest req, HttpServletResponse resp,
+                                        String deviceId, String alertId) throws IOException {
+
+        Map<String, Object> result = new HashMap<>();
+
+        AlertController ac = new AlertController();
+        Alert alert = ac.getById(alertId);
+
+        if (alert == null) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            result.put("success", false);
+            result.put("message", "Alert not found");
+            writeJson(resp, result);
+            return;
+        }
+
+        // (optional) kiểm tra đúng deviceId cho chắc
+        if (!alert.getDeviceId().toString().equals(deviceId)) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            result.put("success", false);
+            result.put("message", "Alert does not belong to this device");
+            writeJson(resp, result);
+            return;
+        }
+
+        // Đánh dấu đã xem
+        alert.setAcknowledged(true);
+        ac.updateAlert(alert);
+
+        result.put("success", true);
+        result.put("alertId", alertId);
+        result.put("deviceId", deviceId);
+        writeJson(resp, result);
     }
 
 

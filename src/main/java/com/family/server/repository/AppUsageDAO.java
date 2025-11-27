@@ -134,7 +134,7 @@ public class AppUsageDAO {
     public List<AppUsage> GetAllOfDevice(String deviceID)
     {
         List<AppUsage> li = new ArrayList<AppUsage>();
-        String sql = "SELECT * FROM appusage where deviceID = ?";
+        String sql = "SELECT * FROM AppUsage WHERE deviceID = ? ORDER BY startAt DESC";
         try
         {
             PreparedStatement ps = con.prepareStatement(sql);

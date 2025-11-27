@@ -7,7 +7,19 @@
 
     <display-name>FamilyMonitoringServer</display-name>
 
-     Filter JWT (bỏ qua auth cho /api/auth/*)
+    <listener>
+        <listener-class>com.family.server.config.StartupListener</listener-class>
+    </listener>
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>com.family.server.security.CorsFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+<!--     Filter JWT (bỏ qua auth cho /api/auth/*)-->
     <filter>
         <filter-name>JwtAuthFilter</filter-name>
         <filter-class>com.family.server.security.JwtAuthFilter</filter-class>
