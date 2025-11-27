@@ -4,8 +4,6 @@ import com.family.server.model.Screenshot;
 import com.family.server.repository.ScreenshotDAO;
 
 public class ScreenshotClear extends Thread {
-	
-	
 	private int maxImgDevice;
 	private long timeClear;
 	

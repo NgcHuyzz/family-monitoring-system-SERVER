@@ -25,8 +25,7 @@ public class Screenshot {
         this.bytes = bytes;
         this.createAt = createAt;
     }
-
-    public UUID getId() {return id;}
+	public UUID getId() {return id;}
     public UUID getDeviceId() {return deviceId;}
     public Timestamp getTs() {return ts;}
     public byte[] getImgData() {return imgData;}

@@ -160,6 +160,69 @@ public class AppUsageDAO {
 
         return li;
     }
+    
+    public void clearAppUsageAllDevice(int max)
+    {
+    	String sql = "SELECT DISTINCT deviceID FROM appusage";
+    	try
+    	{
+    		PreparedStatement ps = con.prepareStatement(sql);
+    		ResultSet rs = ps.executeQuery();
+    		while(rs.next())
+    		{
+    			String deviceID = rs.getString("deviceID");
+    			
+    		}
+    	}
+    	catch(Exception e)
+    	{
+    		
+    	}
+    }
+    
+    public void clearAppUsage(String deviceID, int max)
+    {
+    	String sql = "SELECT COUNT(*) FROM appusage where deviceID = ?";
+		int totalDelete = 0;
+		try
+		{
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, deviceID);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next())
+			{
+				int total = rs.getInt(1);
+				totalDelete = (total - max) > 0 ? (total-max) : 0;
+			}
+		}
+		catch(Exception e)
+		{
+			
+		}
+		
+		if(totalDelete == 0)
+			return;
+		
+		String sql2 = "DELETE FROM appusage "
+				+ "where id IN ( "
+				+ "SELECT id FROM ( "
+				+ "SELECT id FROM appusage where deviceID = ? "
+				+ "ORDER BY ts ASC "
+				+ "LIMIT ? "
+				+ ") as tmp"
+				+ ")";
+		try
+		{
+			PreparedStatement ps = con.prepareStatement(sql2);
+			ps.setString(1, deviceID);
+			ps.setInt(2, totalDelete);
+			ps.executeUpdate();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+    }
 
     // dong ket noi
     public void close()

